@@ -741,10 +741,46 @@ require('lazy').setup({
       'hrsh7th/nvim-cmp',
     },
     config = function()
+      -- local language_server_path = vim.fn.expand '~/.codeium/language_server_linux.x64'
       require('codeium').setup {
-        enable_chat = true,
-        -- tools = { language_server = 'C:\\Users\\tony\\.codeium\\language_server_windows_x64.exe' },
+        enable_chat = false,
+        -- tools = { language_server = language_server_path },
       }
+
+      -- Toggle codeium on and off
+      local Source = require 'codeium.source'
+
+      local function is_codeium_enabled()
+        local enabled = vim.b['codeium_enabled']
+        if enabled == nil then
+          enabled = vim.g['codeium_enabled']
+          if enabled == nil then
+            enabled = false -- enable by default
+          end
+        end
+        return enabled
+      end
+
+      ---@diagnostic disable-next-line: duplicate-set-field
+      function Source:is_available()
+        local enabled = is_codeium_enabled()
+        ---@diagnostic disable-next-line: undefined-field
+        return enabled and self.server.is_healthy()
+      end
+
+      vim.api.nvim_set_keymap('n', '<leader>tC', '', {
+        callback = function()
+          local new_enabled = not is_codeium_enabled()
+          vim.b['codeium_enabled'] = new_enabled
+          if new_enabled then
+            vim.notify 'Codeium enabled in buffer'
+          else
+            vim.notify 'Codeium disabled in buffer'
+          end
+        end,
+        noremap = true,
+        desc = '[T]oggle [C]odeium completion',
+      })
     end,
   },
 
