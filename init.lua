@@ -274,6 +274,17 @@ require('lazy').setup({
     },
   },
 
+  {
+    'norcalli/nvim-colorizer.lua',
+    opts = {
+      '*', -- Highlight all files
+      default_options = {
+        css = true,
+        mode = 'background',
+      },
+    },
+  },
+
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
